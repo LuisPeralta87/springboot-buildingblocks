@@ -1,10 +1,13 @@
 package com.stacksimplify.restservices.entities;
 
 import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 //Entity
 @Entity
@@ -15,10 +18,14 @@ public class Users {
 	@GeneratedValue
 	private Long Id;
 	
+	@NotEmpty(message="Username is a mandatory field, please provide one")
 	@Column(name = "USER_NAME" , length=50, nullable=false, unique=true)
 	private String username;
+	
+	@Size(min=2, message="FirstName should have atleast 2 characters")
 	@Column(name = "FIRST_NAME" , length=50, nullable=false)
 	private String firstName;
+	
 	@Column(name = "LAST_NAME" , length=50, nullable=false)
 	private String lastName;
 	@Column(name = "EMAIL_ADDRESS" , length=50, nullable=false)
