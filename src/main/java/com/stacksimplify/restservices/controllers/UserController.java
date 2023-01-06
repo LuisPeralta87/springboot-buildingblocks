@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,6 +31,7 @@ import jakarta.validation.constraints.Min;
 //Controller
 @RestController
 @Validated
+@RequestMapping(value="/Users")
 public class UserController {
 
 	//Autowire the User Service
@@ -37,7 +39,7 @@ public class UserController {
 	private UserService userService;
 	
 	//getAllUsers method
-	@GetMapping("/Users")
+	@GetMapping
 	public List<Users> getAllUsers(){
 		return userService.getAllUsers();
 	}
@@ -45,12 +47,12 @@ public class UserController {
 	//Create User
 	//@RequestBody Annotation
 	//@PostMapping Annotation
-	@PostMapping("/Users")
+	@PostMapping
 	public ResponseEntity<Void> createUser(@Valid @RequestBody Users user, UriComponentsBuilder builder) {
 		try {
 			 userService.createUser(user);
 			 HttpHeaders headers = new HttpHeaders();
-			 headers.setLocation(builder.path("/Users/{id}").buildAndExpand(user.getId()).toUri());
+			 headers.setLocation(builder.path("/{id}").buildAndExpand(user.getId()).toUri());
 			 return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 		} catch (UserExistsException ex) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -58,7 +60,7 @@ public class UserController {
 	}
 	
 	//Get User by ID
-	@GetMapping("/Users/{id}")
+	@GetMapping("/{id}")
 	public Optional<Users> getUserById(@PathVariable("id") @Min(1)Long id){		
 		try {
 			return userService.getUserById(id);
@@ -68,7 +70,7 @@ public class UserController {
 	}
 	
 	//Update User by ID
-	@PutMapping("/Users/{id}")
+	@PutMapping("/{id}")
 	public Users updateUserById(@PathVariable("id")Long id, @RequestBody Users user ) {
 		
 		try {
@@ -79,13 +81,13 @@ public class UserController {
 	}
 	
 	//Delete User by ID
-	@DeleteMapping("/Users/{id}")
+	@DeleteMapping("/{id}")
 	public void deleteUserById(@PathVariable("id")Long id) {
 		userService.deleteUserById(id);
 	}
 	
 	//Get User by Username
-	@GetMapping("/Users/byusername/{username}")
+	@GetMapping("/byusername/{username}")
 	public Users getUserByUsername(@PathVariable("username")String username) throws UserNameNotFoundException{
 		Users user = userService.getUserByUsername(username);
 		if(user == null) {
